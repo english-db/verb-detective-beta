@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verb Detective</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.screen {
+  position: fixed;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity 0.45s ease;
+}
+
+.screen.active {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 2;
+}
+
+#fade-overlay {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 500;
+  transition: opacity 0.55s ease;
+}
+
+#title-bg,
+#menu-bg {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#title-bg img,
+#menu-bg img {
+  height: 100vh;
+  width: auto;
+  max-width: none;
+  display: block;
+}
+
+#title-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  pointer-events: none;
+}
+
+#title-wrap {
+  margin-top: 6vh;
+  opacity: 0;
+  animation: zoomIn 0.8s cubic-bezier(0.22, 1.5, 0.6, 1) forwards,
+             float 3.5s ease-in-out 0.8s infinite;
+  transform-origin: center center;
+}
+
+#title-wrap img {
+  display: block;
+  width: var(--title-w, 700px);
+  height: auto;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.55));
+}
+
+#btn-wrap {
+  position: absolute;
+  bottom: 6vh;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  animation: fadeInBtn 0.6s ease 1.2s forwards;
+}
+
+#start-btn {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  display: block;
+  padding: 0.15em 1em;
+  font-size: clamp(36px, 5vw, 56px);
+  font-family: 'Lilita One', cursive;
+  color: #4a2800;
+  background: linear-gradient(180deg, #ffd97a 0%, #f5a623 50%, #d4830a 100%);
+  border-radius: 50px;
+  box-shadow: 0 0 0 4px #8b5200, 0 0 0 7px #ffd97a, 0 6px 20px rgba(0, 0, 0, 0.5);
+  text-shadow:
+    0 2px 0 rgba(255, 220, 100, 0.9),
+    0 -2px 0 rgba(100, 50, 0, 0.5),
+    2px 0 0 rgba(255, 220, 100, 0.6),
+    -2px 0 0 rgba(100, 50, 0, 0.3),
+    0 4px 8px rgba(0, 0, 0, 0.4);
+  animation: btnPulse 2s ease-in-out 1.8s infinite;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+#start-btn:hover {
+  transform: scale(1.07);
+  box-shadow: 0 0 0 4px #8b5200, 0 0 0 9px #ffd97a, 0 8px 28px rgba(0, 0, 0, 0.6);
+}
+
+#start-btn:active {
+  transform: scale(0.96);
+}
+
+#books-wrap {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  transform: translate(-50%, -50%);
+}
+
+.book {
+  position: relative;
+  display: block;
+  flex: 0 0 auto;
+  height: 40.5vh;
+  width: auto;
+  cursor: pointer;
+  transform-origin: center bottom;
+  transition: transform 0.28s cubic-bezier(0.22, 1.5, 0.6, 1), filter 0.22s ease;
+  user-select: none;
+}
+
+.book:hover {
+  transform: scale(1.08);
+  filter: brightness(1.13) drop-shadow(0 18px 28px rgba(0, 0, 0, 0.7));
+}
+
+.book:active {
+  transform: scale(1.04);
+}
+
+@keyframes zoomIn {
+  0% { opacity: 0; transform: scale(0.3) rotate(-4deg); }
+  70% { opacity: 1; transform: scale(1.08) rotate(1deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  30% { transform: translateY(-10px) rotate(0.6deg); }
+  60% { transform: translateY(-5px) rotate(-0.4deg); }
+}
+
+@keyframes fadeInBtn {
+  from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes btnPulse {
+  0%, 100% { box-shadow: 0 0 0 4px #8b5200, 0 0 0 7px #ffd97a, 0 6px 20px rgba(0, 0, 0, 0.5); }
+  50% { box-shadow: 0 0 0 4px #8b5200, 0 0 0 13px #ffd97a99, 0 6px 28px rgba(0, 0, 0, 0.55); }
+}
+</style>
+</head>
+<body>
+<div id="fade-overlay"></div>
+
+<div id="screen-title" class="screen active">
+  <div id="title-bg">
+    <img src="assets/common/images/vd_fond.jpg" alt="Background">
+  </div>
+  <div id="title-overlay">
+    <div id="title-wrap">
+      <img src="assets/common/images/title.png" alt="Verb Detective">
+    </div>
+  </div>
+  <div id="btn-wrap">
+    <button id="start-btn" type="button">START</button>
+  </div>
+</div>
+
+<div id="screen-menu" class="screen">
+  <div id="menu-bg">
+    <img src="assets/common/images/menu_part.jpg" alt="Menu Background">
+  </div>
+  <div id="books-wrap" aria-label="Choose a part">
+    <img src="assets/common/images/part1.png" class="book" data-part="1" style="z-index:1" alt="Part 1">
+    <img src="assets/common/images/part2.png" class="book" data-part="2" style="z-index:2" alt="Part 2">
+    <img src="assets/common/images/part3.png" class="book" data-part="3" style="z-index:4" alt="Part 3">
+    <img src="assets/common/images/part4.png" class="book" data-part="4" style="z-index:3" alt="Part 4">
+  </div>
+</div>
+
+<script>
+const S = { height: 41, spacing: 9.6, vertical: 52.5, horizontal: 51.5 };
+const BOOK_MARKERS = [0.35, 0.40, 0.50, 0.63];
+
+const fadeEl = document.getElementById('fade-overlay');
+const titleScr = document.getElementById('screen-title');
+const menuScr = document.getElementById('screen-menu');
+const booksWrap = document.getElementById('books-wrap');
+
+function applyLayout() {
+  booksWrap.style.left = S.horizontal + '%';
+  booksWrap.style.top = S.vertical + '%';
+  booksWrap.style.gap = '0';
+
+  const books = Array.from(document.querySelectorAll('.book'));
+  books.forEach(b => {
+    b.style.height = S.height + 'vh';
+    b.style.marginRight = '0px';
+  });
+
+  const spacingPx = (S.spacing / 100) * window.innerHeight;
+  books.forEach((b, index) => {
+    if (index === books.length - 1) return;
+    const currentWidth = b.getBoundingClientRect().width;
+    const nextWidth = books[index + 1].getBoundingClientRect().width;
+    const currentMarker = BOOK_MARKERS[index] * currentWidth;
+    const nextMarker = BOOK_MARKERS[index + 1] * nextWidth;
+    b.style.marginRight = (spacingPx + currentMarker - currentWidth - nextMarker) + 'px';
+  });
+}
+
+function applyLayoutWhenReady() {
+  const images = Array.from(document.querySelectorAll('.book'));
+  if (images.every(img => img.complete && img.naturalWidth > 0)) {
+    applyLayout();
+    return;
+  }
+  Promise.all(images.map(img => {
+    if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+    return new Promise(resolve => img.addEventListener('load', resolve, { once: true }));
+  })).then(() => applyLayout());
+}
+
+document.getElementById('start-btn').addEventListener('click', () => {
+  fadeEl.style.opacity = '1';
+  fadeEl.style.pointerEvents = 'all';
+
+  setTimeout(() => {
+    titleScr.classList.remove('active');
+    menuScr.classList.add('active');
+
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      fadeEl.style.opacity = '0';
+      fadeEl.style.pointerEvents = 'none';
+    }));
+  }, 580);
+});
+
+function showOrientationScreen() {
+  titleScr.classList.remove('active');
+  menuScr.classList.add('active');
+
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    fadeEl.style.opacity = '0';
+    fadeEl.style.pointerEvents = 'none';
+  }));
+}
+
+if (window.location.hash === '#orientation') {
+  titleScr.classList.remove('active');
+  menuScr.classList.add('active');
+}
+
+window.addEventListener('hashchange', () => {
+  if (window.location.hash === '#orientation') {
+    showOrientationScreen();
+  }
+});
+
+document.querySelectorAll('.book').forEach(book => {
+  book.addEventListener('click', () => {
+    const part = book.dataset.part;
+    window.location.href = `part.html?part=${encodeURIComponent(part)}`;
+  });
+});
+
+const BG_W = 1377, BG_H = 768, TITLE_BASE_W = 700;
+function resizeTitle() {
+  const scale = Math.min(window.innerWidth / BG_W, window.innerHeight / BG_H);
+  document.getElementById('title-wrap').style.setProperty('--title-w', (TITLE_BASE_W * scale) + 'px');
+}
+
+window.addEventListener('resize', () => { resizeTitle(); applyLayout(); });
+
+resizeTitle();
+applyLayoutWhenReady();
+</script>
+</body>
+</html>

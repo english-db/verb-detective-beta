@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="41.703621mm"
+   height="15.038873mm"
+   viewBox="0 0 41.703621 15.038873"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <g
+     id="layer1"
+     transform="translate(-167.74583,-134.67291)">
+    <path
+       d="m 181.29885,139.66687 c 0,1.4613 -1.18454,2.64583 -2.64583,2.64583 -1.4613,0 -2.64584,-1.18453 -2.64584,-2.64583 0,-1.46129 1.18454,-2.64583 2.64584,-2.64583 1.46129,0 2.64583,1.18454 2.64583,2.64583 z"
+       stroke="#ff0000"
+       stroke-width="0.529167"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       fill="none"
+       id="path1" />
+    <path
+       d="m 200.61343,138.07937 -3.175,3.175"
+       stroke="#00b050"
+       stroke-width="0.529167"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       fill="none"
+       id="path3" />
+    <path
+       d="m 197.43843,138.07937 3.175,3.175"
+       stroke="#00b050"
+       stroke-width="0.529167"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       fill="none"
+       id="path4" />
+    <path
+       d="m 190.29468,138.07937 -3.175,3.175"
+       stroke="#0070c0"
+       stroke-width="0.529167"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       fill="none"
+       id="path6" />
+    <path
+       d="m 187.11968,138.07937 3.175,3.175"
+       stroke="#0070c0"
+       stroke-width="0.529167"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       fill="none"
+       id="path7" />
+    <path
+       d="m 184.73843,137.02104 c 0,-0.73052 0.5924,-1.32292 1.32292,-1.32292 h 5.29167 c 0.73051,0 1.32291,0.5924 1.32291,1.32292 v 5.29166 c 0,0.73052 -0.5924,1.32292 -1.32291,1.32292 h -5.29167 c -0.73052,0 -1.32292,-0.5924 -1.32292,-1.32292 z"
+       stroke="#000000"
+       stroke-width="0.529167"
+       stroke-miterlimit="8"
+       fill="none"
+       fill-rule="evenodd"
+       id="path9" />
+    <path
+       d="m 195.05718,137.02104 c 0,-0.73052 0.5924,-1.32292 1.32292,-1.32292 h 5.29166 c 0.73052,0 1.32292,0.5924 1.32292,1.32292 v 5.29166 c 0,0.73052 -0.5924,1.32292 -1.32292,1.32292 h -5.29166 c -0.73052,0 -1.32292,-0.5924 -1.32292,-1.32292 z"
+       stroke="#000000"
+       stroke-width="0.529167"
+       stroke-miterlimit="8"
+       fill="none"
+       fill-rule="evenodd"
+       id="path10" />
+    <path
+       d="m 199.02593,146.01687 c 0,1.31525 0,2.38125 0,2.38125 h -10.31875 c 0,0 0,-1.066 0,-2.38125"
+       stroke="#000000"
+       stroke-width="0.529167"
+       stroke-miterlimit="8"
+       fill="none"
+       fill-rule="evenodd"
+       id="path11" />
+    <text
+       font-family="'Font Awesome 6 Free Solid', 'Font Awesome 6 Free Solid_MSFontService', sans-serif"
+       font-weight="900"
+       font-size="3.52777px"
+       transform="rotate(-45.198966)"
+       id="text11"
+       style="display:inline;stroke-width:0.264583"
+       x="27.687387"
+       y="238.30258"></text>
+    <text
+       font-family="'Font Awesome 6 Free Solid', 'Font Awesome 6 Free Solid_MSFontService', sans-serif"
+       font-weight="900"
+       font-size="3.52777px"
+       transform="rotate(-45.198966)"
+       id="text12"
+       style="display:inline;stroke-width:0.264583"
+       x="34.878643"
+       y="245.72098"></text>
+  </g>
+</svg>

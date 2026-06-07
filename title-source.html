@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verb Detective</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+/* ─── SCREENS ────────────────────────────────────────────────── */
+.screen {
+  position: fixed;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+.screen.active {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 2;
+}
+
+/* ─── FADE OVERLAY ───────────────────────────────────────────── */
+#fade-overlay {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 500;
+  transition: opacity 0.55s ease;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TITLE SCREEN
+══════════════════════════════════════════════════════════════ */
+#title-bg {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+#title-bg img {
+  height: 100vh; width: auto; max-width: none; display: block;
+}
+
+#title-overlay {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start;
+  pointer-events: none;
+}
+
+#title-wrap {
+  margin-top: 6vh;
+  opacity: 0;
+  animation: zoomIn 0.8s cubic-bezier(0.22,1.5,0.6,1) forwards,
+             float  3.5s ease-in-out 0.8s infinite;
+  transform-origin: center center;
+}
+#title-wrap img {
+  display: block;
+  width: var(--title-w, 700px);
+  height: auto;
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,0.55));
+}
+
+@keyframes zoomIn {
+  0%   { opacity:0; transform: scale(0.3) rotate(-4deg); }
+  70%  { opacity:1; transform: scale(1.08) rotate(1deg); }
+  100% { opacity:1; transform: scale(1) rotate(0deg); }
+}
+@keyframes float {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  30%     { transform: translateY(-10px) rotate(0.6deg); }
+  60%     { transform: translateY(-5px)  rotate(-0.4deg); }
+}
+
+#btn-wrap {
+  position: absolute;
+  bottom: 6vh; left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  animation: fadeInBtn 0.6s ease 1.2s forwards;
+}
+#start-btn {
+  cursor: pointer; border: none; outline: none;
+  display: block; padding: 0.15em 1em;
+  font-size: clamp(36px, 5vw, 56px);
+  font-family: 'Lilita One', cursive;
+  color: #4a2800;
+  background: linear-gradient(180deg, #ffd97a 0%, #f5a623 50%, #d4830a 100%);
+  border-radius: 50px;
+  box-shadow: 0 0 0 4px #8b5200, 0 0 0 7px #ffd97a, 0 6px 20px rgba(0,0,0,0.5);
+  text-shadow:
+    0 2px 0 rgba(255,220,100,0.9),  0 -2px 0 rgba(100,50,0,0.5),
+    2px 0 0 rgba(255,220,100,0.6), -2px 0 0 rgba(100,50,0,0.3),
+    0 4px 8px rgba(0,0,0,0.4);
+  animation: btnPulse 2s ease-in-out 1.8s infinite;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+#start-btn:hover {
+  transform: scale(1.07);
+  box-shadow: 0 0 0 4px #8b5200, 0 0 0 9px #ffd97a, 0 8px 28px rgba(0,0,0,0.6);
+}
+#start-btn:active { transform: scale(0.96); }
+@keyframes fadeInBtn {
+  from { opacity:0; transform: translateX(-50%) translateY(20px); }
+  to   { opacity:1; transform: translateX(-50%) translateY(0); }
+}
+@keyframes btnPulse {
+  0%,100% { box-shadow: 0 0 0 4px #8b5200, 0 0 0  7px #ffd97a,   0 6px 20px rgba(0,0,0,0.5); }
+  50%     { box-shadow: 0 0 0 4px #8b5200, 0 0 0 13px #ffd97a99, 0 6px 28px rgba(0,0,0,0.55); }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MENU SCREEN
+══════════════════════════════════════════════════════════════ */
+#menu-bg {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+#menu-bg img {
+  height: 100vh; width: auto; max-width: none; display: block;
+}
+
+/* Books group – positioned entirely by JS */
+#books-wrap {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  transform: translate(-50%, -50%);
+}
+
+/* Individual books */
+.book {
+  position: relative;
+  display: block;
+  flex: 0 0 auto;
+  height: 40.5vh;
+  width: auto;
+  cursor: pointer;
+  transform-origin: center bottom;
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1.5, 0.6, 1),
+    filter    0.22s ease;
+  user-select: none;
+}
+.book:hover {
+  transform: scale(1.08);
+  filter: brightness(1.13) drop-shadow(0 18px 28px rgba(0,0,0,0.7));
+}
+.book:active {
+  transform: scale(1.04);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   DEBUG PANEL
+══════════════════════════════════════════════════════════════ */
+#debug-toggle {
+  position: fixed;
+  bottom: 14px; right: 16px;
+  background: rgba(12,7,2,0.78);
+  color: #ffd97a;
+  border: 1px solid rgba(255,217,122,0.3);
+  border-radius: 6px;
+  padding: 5px 13px;
+  font-family: 'Courier New', monospace;
+  font-size: 11.5px; letter-spacing: 0.5px;
+  cursor: pointer;
+  z-index: 600;
+  display: none;
+  backdrop-filter: blur(6px);
+  transition: background 0.18s, border-color 0.18s;
+}
+#debug-toggle:hover {
+  background: rgba(40,22,4,0.9);
+  border-color: rgba(255,217,122,0.6);
+}
+
+#debug-panel {
+  position: fixed;
+  bottom: 48px; right: 16px;
+  background: rgba(10,5,2,0.88);
+  border: 1px solid rgba(255,217,122,0.18);
+  border-radius: 10px;
+  padding: 14px 16px 10px;
+  width: 268px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px; color: #d8c8b0;
+  z-index: 600;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 36px rgba(0,0,0,0.6);
+  display: none;
+}
+#debug-panel h4 {
+  font-size: 10.5px; text-transform: uppercase;
+  letter-spacing: 1.8px; color: #ffd97a;
+  margin-bottom: 13px; opacity: 0.85;
+}
+.dbr {
+  display: grid;
+  grid-template-columns: 76px 1fr 54px;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 9px;
+}
+.dbr:last-child { margin-bottom: 0; }
+.dbr label { font-size: 11px; color: #b8a888; }
+.dbr input[type=range] {
+  width: 100%; height: 4px;
+  accent-color: #f5a623;
+  cursor: pointer;
+}
+.dbr .dv {
+  text-align: right;
+  color: #ffd97a; font-weight: bold;
+  font-size: 11.5px;
+}
+</style>
+</head>
+<body>
+
+<!-- Fade overlay -->
+<div id="fade-overlay"></div>
+
+<!-- ── Screen 1 : Title ───────────────────── -->
+<div id="screen-title" class="screen active">
+  <div id="title-bg">
+    <img src="vd_fond.jpg" alt="Background">
+  </div>
+  <div id="title-overlay">
+    <div id="title-wrap">
+      <img src="title.png" alt="Verb Detective">
+    </div>
+  </div>
+  <div id="btn-wrap">
+    <button id="start-btn">START</button>
+  </div>
+</div>
+
+<!-- ── Screen 2 : Menu ────────────────────── -->
+<div id="screen-menu" class="screen">
+  <div id="menu-bg">
+    <img src="menu_part.jpg" alt="Menu Background">
+  </div>
+
+  <!--
+    z-index ladder (bg = 0):
+      part1 = 1  (directly over bg)
+      part2 = 2  (above part1)
+      part4 = 3  (above part2)
+      part3 = 4  (above part4 — topmost)
+  -->
+  <div id="books-wrap">
+    <img src="part1.png" class="book" data-part="1" style="z-index:1" alt="Part 1">
+    <img src="part2.png" class="book" data-part="2" style="z-index:2" alt="Part 2">
+    <img src="part3.png" class="book" data-part="3" style="z-index:4" alt="Part 3">
+    <img src="part4.png" class="book" data-part="4" style="z-index:3" alt="Part 4">
+  </div>
+</div>
+
+<!-- ── Debug ──────────────────────────────── -->
+<button id="debug-toggle">⚙ DEBUG</button>
+
+<div id="debug-panel">
+  <h4>⚙ Live Controls</h4>
+  <div class="dbr">
+    <label>Height</label>
+    <input type="range" id="c-height"     min="20"  max="80"  step="0.5" value="41">
+    <span class="dv"><span id="v-height">41</span>vh</span>
+  </div>
+  <div class="dbr">
+    <label>Spacing</label>
+    <input type="range" id="c-spacing"    min="-5"   max="15"  step="0.1" value="9.6">
+    <span class="dv"><span id="v-spacing">9.6</span>vh</span>
+  </div>
+  <div class="dbr">
+    <label>Vertical</label>
+    <input type="range" id="c-vertical"   min="0"   max="100" step="0.5" value="52.5">
+    <span class="dv"><span id="v-vertical">52.5</span>%</span>
+  </div>
+  <div class="dbr">
+    <label>Horizontal</label>
+    <input type="range" id="c-horizontal" min="0"   max="100" step="0.5" value="51.5">
+    <span class="dv"><span id="v-horizontal">51.5</span>%</span>
+  </div>
+</div>
+
+<script>
+/* ─────────────────────────────────────────────────────────────
+   STATE
+───────────────────────────────────────────────────────────── */
+const S = { height: 41, spacing: 9.6, vertical: 52.5, horizontal: 51.5 };
+const BOOK_MARKERS = [0.35, 0.40, 0.50, 0.63];
+
+/* ─────────────────────────────────────────────────────────────
+   ELEMENTS
+───────────────────────────────────────────────────────────── */
+const fadeEl    = document.getElementById('fade-overlay');
+const titleScr  = document.getElementById('screen-title');
+const menuScr   = document.getElementById('screen-menu');
+const booksWrap = document.getElementById('books-wrap');
+const dbgPanel  = document.getElementById('debug-panel');
+const dbgToggle = document.getElementById('debug-toggle');
+const controlMap = [
+  { id: 'c-height',     vid: 'v-height',     key: 'height'     },
+  { id: 'c-spacing',    vid: 'v-spacing',    key: 'spacing'    },
+  { id: 'c-vertical',   vid: 'v-vertical',   key: 'vertical'   },
+  { id: 'c-horizontal', vid: 'v-horizontal', key: 'horizontal' },
+];
+
+/* ─────────────────────────────────────────────────────────────
+   LAYOUT — all units anchored to 100vh / viewport %
+   • left / top  = % of containing block (= viewport)
+   • spacing     = vh  (advance between visual centers)
+   • book height = vh
+───────────────────────────────────────────────────────────── */
+function applyLayout() {
+  booksWrap.style.left = S.horizontal + '%';
+  booksWrap.style.top  = S.vertical   + '%';
+  booksWrap.style.gap  = '0';
+
+  const books = Array.from(document.querySelectorAll('.book'));
+  books.forEach(b => {
+    b.style.height = S.height + 'vh';
+    b.style.marginRight = '0px';
+  });
+
+  // Spacing is measured in vh so viewport width changes do not affect the row.
+  // Each image uses its own visual center marker, so adjacent books line up by
+  // the meaningful anchor point instead of assuming the art is visually centered.
+  const spacingPx = (S.spacing / 100) * window.innerHeight;
+  books.forEach((b, index) => {
+    if (index === books.length - 1) return;
+    const currentWidth = b.getBoundingClientRect().width;
+    const nextWidth = books[index + 1].getBoundingClientRect().width;
+    const currentMarker = BOOK_MARKERS[index] * currentWidth;
+    const nextMarker = BOOK_MARKERS[index + 1] * nextWidth;
+    b.style.marginRight = (spacingPx + currentMarker - currentWidth - nextMarker) + 'px';
+  });
+}
+
+function syncDebugUI() {
+  controlMap.forEach(({ id, vid, key }) => {
+    const control = document.getElementById(id);
+    if (!control) return;
+    control.value = String(S[key]);
+    document.getElementById(vid).textContent = String(S[key]);
+  });
+}
+
+function applyLayoutWhenReady() {
+  const images = Array.from(document.querySelectorAll('.book'));
+  if (images.every(img => img.complete && img.naturalWidth > 0)) {
+    applyLayout();
+    return;
+  }
+  Promise.all(images.map(img => {
+    if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+    return new Promise(resolve => img.addEventListener('load', resolve, { once: true }));
+  })).then(() => applyLayout());
+}
+
+/* ─────────────────────────────────────────────────────────────
+   TITLE → MENU TRANSITION
+───────────────────────────────────────────────────────────── */
+document.getElementById('start-btn').addEventListener('click', () => {
+  // 1. Fade to black
+  fadeEl.style.opacity = '1';
+  fadeEl.style.pointerEvents = 'all';
+
+  setTimeout(() => {
+    // 2. Swap screens
+    titleScr.classList.remove('active');
+    menuScr.classList.add('active');
+    dbgToggle.style.display = 'block';
+
+    // 3. Fade back in (double-rAF ensures paint happens first)
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      fadeEl.style.opacity = '0';
+      fadeEl.style.pointerEvents = 'none';
+    }));
+  }, 580);
+});
+
+/* ─────────────────────────────────────────────────────────────
+   BOOK CLICKS
+───────────────────────────────────────────────────────────── */
+document.querySelectorAll('.book').forEach(book => {
+  book.addEventListener('click', () => {
+    const part = book.dataset.part;
+    // TODO: replace with actual navigation
+    // window.location.href = `verb_detective_part${part}.html?ep=${part}`;
+    alert('Loading Part ' + part + '… \uD83D\uDCDA');
+  });
+});
+
+/* ─────────────────────────────────────────────────────────────
+   DEBUG CONTROLS
+───────────────────────────────────────────────────────────── */
+[ 
+  { id: 'c-height',     vid: 'v-height',     key: 'height'     },
+  { id: 'c-spacing',    vid: 'v-spacing',    key: 'spacing'    },
+  { id: 'c-vertical',   vid: 'v-vertical',   key: 'vertical'   },
+  { id: 'c-horizontal', vid: 'v-horizontal', key: 'horizontal' },
+].forEach(({ id, vid, key }) => {
+  document.getElementById(id).addEventListener('input', function () {
+    S[key] = parseFloat(this.value);
+    document.getElementById(vid).textContent = this.value;
+    applyLayout();
+  });
+});
+
+let dbgOpen = false;
+dbgToggle.addEventListener('click', () => {
+  dbgOpen = !dbgOpen;
+  dbgPanel.style.display = dbgOpen ? 'block' : 'none';
+  dbgToggle.textContent  = dbgOpen ? '\u2715 CLOSE' : '\u2699 DEBUG';
+});
+
+/* ─────────────────────────────────────────────────────────────
+   TITLE RESPONSIVE RESIZE
+───────────────────────────────────────────────────────────── */
+const BG_W = 1377, BG_H = 768, TITLE_BASE_W = 700;
+
+function resizeTitle() {
+  const scale = Math.min(window.innerWidth / BG_W, window.innerHeight / BG_H);
+  document.getElementById('title-wrap')
+    .style.setProperty('--title-w', (TITLE_BASE_W * scale) + 'px');
+}
+
+window.addEventListener('resize', () => { resizeTitle(); applyLayout(); });
+
+/* ─────────────────────────────────────────────────────────────
+   INIT
+───────────────────────────────────────────────────────────── */
+resizeTitle();
+syncDebugUI();
+applyLayoutWhenReady();
+</script>
+</body>
+</html>
