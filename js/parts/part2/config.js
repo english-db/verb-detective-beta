@@ -15,10 +15,10 @@ export const part2Config = {
   audio: {
     narratorCount: 5,
     introSequence: [
-      "assets/parts/part2/audio/intro/let_s_learn.mp3",
+      "assets/parts/part1/audio/intro/let_s_learn.mp3",
       "assets/parts/part2/audio/intro/part2.mp3"
     ],
-    challengeIntro: "assets/parts/part2/audio/intro/challenge.mp3"
+    challengeIntro: "assets/parts/part1/audio/intro/challenge.mp3"
   },
   assetsRoot: "assets/parts/part2"
 };
