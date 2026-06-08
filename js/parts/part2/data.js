@@ -30,66 +30,66 @@ export const HOTSPOTS = {
     name: "US Segregation",
     imageFile: "assets/parts/part2/images/2-1.jpg",
     verbs: {
-      fight: makeHotspot(585, 410, 50),
-      lead: makeHotspot(125, 400, 50),
-      hold: makeHotspot(1290, 435, 50),
-      hear: makeHotspot(965, 445, 50),
-      forbid: makeHotspot(880, 320, 50)
+      fight: makeHotspot(585, 410, 80),
+      lead: makeHotspot(125, 400, 80),
+      hold: makeHotspot(1290, 435, 80),
+      hear: makeHotspot(965, 445, 80),
+      forbid: makeHotspot(880, 320, 80)
     }
   },
   room22: {
     name: "Shakespeare's Theater",
     imageFile: "assets/parts/part2/images/2-2.jpg",
     verbs: {
-      kneel: makeHotspot(555, 585, 50),
-      hide: makeHotspot(220, 415, 50),
-      hit: makeHotspot(1225, 430, 50),
-      hurt: makeHotspot(1245, 655, 50),
-      lay: makeHotspot(745, 460, 50)
+      kneel: makeHotspot(555, 585, 80),
+      hide: makeHotspot(220, 415, 80),
+      hit: makeHotspot(1225, 430, 80),
+      hurt: makeHotspot(1245, 655, 80),
+      lay: makeHotspot(745, 460, 80)
     }
   },
   room23: {
     name: "Irish Famine",
     imageFile: "assets/parts/part2/images/2-3.jpg",
     verbs: {
-      grow: makeHotspot(375, 655, 50),
-      feed: makeHotspot(525, 370, 50),
-      eat: makeHotspot(745, 410, 50),
-      freeze: makeHotspot(1000, 425, 50),
-      fall: makeHotspot(1175, 680, 50)
+      grow: makeHotspot(375, 655, 80),
+      feed: makeHotspot(525, 370, 80),
+      eat: makeHotspot(745, 410, 80),
+      freeze: makeHotspot(1000, 425, 80),
+      fall: makeHotspot(1175, 680, 80)
     }
   },
   room24: {
     name: "Medieval Court",
     imageFile: "assets/parts/part2/images/2-4.jpg",
     verbs: {
-      feel: makeHotspot(355, 375, 50),
-      forgive: makeHotspot(715, 425, 50),
-      keep: makeHotspot(1060, 380, 50),
-      hang: makeHotspot(140, 190, 50),
-      drink: makeHotspot(1240, 340, 50)
+      feel: makeHotspot(355, 375, 80),
+      forgive: makeHotspot(715, 425, 80),
+      keep: makeHotspot(1060, 380, 80),
+      hang: makeHotspot(140, 190, 80),
+      drink: makeHotspot(1240, 340, 80)
     }
   },
   room25: {
     name: "Industrial Revolution",
     imageFile: "assets/parts/part2/images/2-5.jpg",
     verbs: {
-      drive: makeHotspot(810, 375, 50),
-      grind: makeHotspot(385, 410, 50),
-      get: makeHotspot(260, 505, 50),
-      have: makeHotspot(1125, 360, 50),
-      know: makeHotspot(1285, 290, 50)
+      drive: makeHotspot(810, 375, 80),
+      grind: makeHotspot(385, 410, 80),
+      get: makeHotspot(260, 505, 80),
+      have: makeHotspot(1125, 360, 80),
+      know: makeHotspot(1285, 290, 80)
     }
   },
   room26: {
     name: "Age of Exploration",
     imageFile: "assets/parts/part2/images/2-6.jpg",
     verbs: {
-      find: makeHotspot(530, 535, 50),
-      fly: makeHotspot(580, 235, 50),
-      give: makeHotspot(950, 455, 50),
-      go: makeHotspot(150, 355, 50),
-      forget: makeHotspot(1240, 340, 50)
+      find: makeHotspot(530, 535, 80),
+      fly: makeHotspot(580, 235, 80),
+      give: makeHotspot(950, 455, 80),
+      go: makeHotspot(150, 355, 80),
+      forget: makeHotspot(1240, 340, 80)
     }
   }
 };

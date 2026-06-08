@@ -30,66 +30,66 @@ export const HOTSPOTS = {
     name: "Alien Classroom",
     imageFile: "assets/parts/part4/images/4-1.jpg",
     verbs: {
-      understand: makeHotspot(605, 295, 50),
-      think: makeHotspot(290, 340, 50),
-      teach: makeHotspot(910, 260, 50),
-      write: makeHotspot(1110, 570, 50),
-      spell: makeHotspot(190, 225, 50)
+      understand: makeHotspot(605, 295, 80),
+      think: makeHotspot(290, 340, 80),
+      teach: makeHotspot(910, 260, 80),
+      write: makeHotspot(1110, 570, 80),
+      spell: makeHotspot(190, 225, 80)
     }
   },
   room42: {
     name: "Kung Fu Training",
     imageFile: "assets/parts/part4/images/4-2.jpg",
     verbs: {
-      swim: makeHotspot(250, 270, 50),
-      win: makeHotspot(700, 190, 50),
-      strike: makeHotspot(1270, 155, 50),
-      stand: makeHotspot(230, 510, 50),
-      take: makeHotspot(1230, 590, 50)
+      swim: makeHotspot(250, 270, 80),
+      win: makeHotspot(700, 190, 80),
+      strike: makeHotspot(1270, 155, 80),
+      stand: makeHotspot(230, 510, 80),
+      take: makeHotspot(1230, 590, 80)
     }
   },
   room43: {
     name: "Kitchen Nightmares",
     imageFile: "assets/parts/part4/images/4-3.jpg",
     verbs: {
-      smell: makeHotspot(160, 300, 50),
-      spill: makeHotspot(550, 590, 50),
-      spoil: makeHotspot(1340, 405, 50),
-      sweep: makeHotspot(680, 270, 50),
-      wear: makeHotspot(875, 210, 50)
+      smell: makeHotspot(160, 300, 80),
+      spill: makeHotspot(550, 590, 80),
+      spoil: makeHotspot(1340, 405, 80),
+      sweep: makeHotspot(680, 270, 80),
+      wear: makeHotspot(875, 210, 80)
     }
   },
   room44: {
     name: "Mission Impossible",
     imageFile: "assets/parts/part4/images/4-4.jpg",
     verbs: {
-      stick: makeHotspot(550, 450, 50),
-      spread: makeHotspot(800, 465, 50),
-      tear: makeHotspot(1240, 360, 50),
-      throw: makeHotspot(945, 110, 50),
-      upset: makeHotspot(385, 280, 50)
+      stick: makeHotspot(550, 450, 80),
+      spread: makeHotspot(800, 465, 80),
+      tear: makeHotspot(1240, 360, 80),
+      throw: makeHotspot(945, 110, 80),
+      upset: makeHotspot(385, 280, 80)
     }
   },
   room45: {
     name: "Casino",
     imageFile: "assets/parts/part4/images/4-5.jpg",
     verbs: {
-      spend: makeHotspot(435, 620, 50),
-      withdraw: makeHotspot(175, 285, 50),
-      tell: makeHotspot(910, 345, 50),
-      speak: makeHotspot(635, 390, 50),
-      swear: makeHotspot(1275, 375, 50)
+      spend: makeHotspot(435, 620, 80),
+      withdraw: makeHotspot(175, 285, 80),
+      tell: makeHotspot(910, 345, 80),
+      speak: makeHotspot(635, 390, 80),
+      swear: makeHotspot(1275, 375, 80)
     }
   },
   room46: {
     name: "Scream",
     imageFile: "assets/parts/part4/images/4-6.jpg",
     verbs: {
-      sleep: makeHotspot(1170, 405, 50),
-      wake: makeHotspot(505, 390, 50),
-      stink: makeHotspot(735, 550, 50),
-      sting: makeHotspot(310, 345, 50),
-      steal: makeHotspot(190, 410, 50)
+      sleep: makeHotspot(1170, 405, 80),
+      wake: makeHotspot(505, 390, 80),
+      stink: makeHotspot(735, 550, 80),
+      sting: makeHotspot(310, 345, 80),
+      steal: makeHotspot(190, 410, 80)
     }
   }
 };

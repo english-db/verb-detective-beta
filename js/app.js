@@ -366,7 +366,21 @@ class AppController {
 
       if (!room?.verbs) return;
 
-      Object.values(room.verbs).forEach(verb => {
+      Object.entries(room.verbs).forEach(([verbId, verb]) => {
+        const latestHotspot = getHotspot(room.id, verbId);
+        if (latestHotspot) {
+          const hotspotChanged =
+            !verb.hotspot ||
+            verb.hotspot.x !== latestHotspot.x ||
+            verb.hotspot.y !== latestHotspot.y ||
+            verb.hotspot.radius !== latestHotspot.radius;
+
+          verb.hotspot = latestHotspot;
+          if (hotspotChanged) {
+            migrated = true;
+          }
+        }
+
         verb.oral = verb.oral || {};
         if (typeof verb.oral.successes !== 'number') {
           verb.oral.successes = 0;

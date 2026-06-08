@@ -30,66 +30,66 @@ export const HOTSPOTS = {
     name: "Sunrise",
     imageFile: "assets/parts/part3/images/3-1.jpg",
     verbs: {
-      rise: makeHotspot(680, 140, 50),
-      shine: makeHotspot(675, 240, 50),
-      light: makeHotspot(340, 595, 50),
-      sit: makeHotspot(880, 510, 50),
-      see: makeHotspot(1175, 260, 50)
+      rise: makeHotspot(675, 210, 80),
+      shine: makeHotspot(665, 400, 80),
+      light: makeHotspot(300, 570, 80),
+      sit: makeHotspot(900, 470, 80),
+      see: makeHotspot(1185, 260, 80)
     }
   },
   room32: {
     name: "Forest",
     imageFile: "assets/parts/part3/images/3-2.jpg",
     verbs: {
-      run: makeHotspot(615, 315, 50),
-      ride: makeHotspot(815, 330, 50),
-      shake: makeHotspot(210, 250, 50),
-      shoot: makeHotspot(1225, 260, 50),
-      seek: makeHotspot(1240, 520, 50)
+      run: makeHotspot(615, 315, 80),
+      ride: makeHotspot(815, 330, 80),
+      shake: makeHotspot(210, 250, 80),
+      shoot: makeHotspot(1225, 260, 80),
+      seek: makeHotspot(1240, 520, 80)
     }
   },
   room33: {
     name: "Campfire",
     imageFile: "assets/parts/part3/images/3-3.jpg",
     verbs: {
-      make: makeHotspot(665, 425, 50),
-      meet: makeHotspot(325, 250, 50),
-      say: makeHotspot(940, 170, 50),
-      pay: makeHotspot(1020, 315, 50),
-      sing: makeHotspot(1270, 385, 50)
+      make: makeHotspot(665, 425, 80),
+      meet: makeHotspot(325, 250, 80),
+      say: makeHotspot(940, 170, 80),
+      pay: makeHotspot(1020, 315, 80),
+      sing: makeHotspot(1270, 385, 80)
     }
   },
   room34: {
     name: "Storm",
     imageFile: "assets/parts/part3/images/3-4.jpg",
     verbs: {
-      set: makeHotspot(545, 560, 50),
-      shut: makeHotspot(1010, 440, 50),
-      let: makeHotspot(215, 415, 50),
-      ring: makeHotspot(1225, 290, 50),
-      mean: makeHotspot(500, 355, 50)
+      set: makeHotspot(545, 560, 80),
+      shut: makeHotspot(1010, 440, 80),
+      let: makeHotspot(215, 415, 80),
+      ring: makeHotspot(1225, 290, 80),
+      mean: makeHotspot(500, 355, 80)
     }
   },
   room35: {
     name: "Archaeology",
     imageFile: "assets/parts/part3/images/3-5.jpg",
     verbs: {
-      learn: makeHotspot(550, 375, 50),
-      leave: makeHotspot(1265, 125, 50),
-      lie: makeHotspot(260, 325, 50),
-      read: makeHotspot(1005, 335, 50),
-      show: makeHotspot(1115, 510, 50)
+      learn: makeHotspot(550, 375, 80),
+      leave: makeHotspot(1265, 125, 80),
+      lie: makeHotspot(260, 325, 80),
+      read: makeHotspot(1005, 335, 80),
+      show: makeHotspot(1115, 510, 80)
     }
   },
   room36: {
     name: "Trade",
     imageFile: "assets/parts/part3/images/3-6.jpg",
     verbs: {
-      lend: makeHotspot(425, 345, 50),
-      lose: makeHotspot(825, 660, 50),
-      put: makeHotspot(1180, 260, 50),
-      sell: makeHotspot(1110, 485, 50),
-      send: makeHotspot(690, 265, 50)
+      lend: makeHotspot(425, 345, 80),
+      lose: makeHotspot(825, 660, 80),
+      put: makeHotspot(1180, 260, 80),
+      sell: makeHotspot(1110, 485, 80),
+      send: makeHotspot(690, 265, 80)
     }
   }
 };

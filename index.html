@@ -4,11 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Verb Detective</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
+
+@font-face {
+  font-family: 'Lilita One';
+  src: url('assets/common/fonts/lilita-one-v17-latin-regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
 
 html, body {
   width: 100%;
@@ -91,6 +96,9 @@ html, body {
   left: 50%;
   transform: translateX(-50%);
   opacity: 0;
+}
+
+body.title-fonts-ready #btn-wrap {
   animation: fadeInBtn 0.6s ease 1.2s forwards;
 }
 
@@ -112,8 +120,11 @@ html, body {
     2px 0 0 rgba(255, 220, 100, 0.6),
     -2px 0 0 rgba(100, 50, 0, 0.3),
     0 4px 8px rgba(0, 0, 0, 0.4);
-  animation: btnPulse 2s ease-in-out 1.8s infinite;
   transition: transform 0.1s, box-shadow 0.1s;
+}
+
+body.title-fonts-ready #start-btn {
+  animation: btnPulse 2s ease-in-out 1.8s infinite;
 }
 
 #start-btn:hover {
@@ -298,10 +309,23 @@ function resizeTitle() {
   document.getElementById('title-wrap').style.setProperty('--title-w', (TITLE_BASE_W * scale) + 'px');
 }
 
+async function prepareTitleAnimations() {
+  if (document.fonts?.load) {
+    try {
+      await document.fonts.load("1em 'Lilita One'");
+    } catch (error) {
+      console.warn('Title screen: font preload failed', error);
+    }
+  }
+
+  document.body.classList.add('title-fonts-ready');
+}
+
 window.addEventListener('resize', () => { resizeTitle(); applyLayout(); });
 
 resizeTitle();
 applyLayoutWhenReady();
+prepareTitleAnimations();
 </script>
 </body>
 </html>

@@ -24,10 +24,12 @@ Recent status update:
 - Parts 1, 2, 3, and 4 now all enter rooms correctly and stage 1 starts again.
 - The root cause was shared `localStorage` state across all parts; state is now isolated per part with a compatibility check for old saves.
 - Stage 1 now shows its banner text correctly and plays `challenge.mp3` on room entry.
+- Parts 2, 3, and 4 now reuse `assets/parts/part1/audio/intro/challenge.mp3` because only part 1 currently contains the shared `challenge.mp3` and `let_s_learn.mp3` intro assets.
 - Oral banner chip styling is now consistent for stages 1, 2, 3, 4, 5, and 7.
 - Written MCQ boxes for stages 9 and 10 now use `Shantell Sans`.
 - The orientation page no longer has the debug tuning button/panel; the current tuned layout is hard-coded.
 - The room-page developer shortcut button is now hidden by default and can be toggled silently by typing `dev` on the part app page.
+- The project is now deployed on GitHub Pages at `https://english-db.github.io/verb-detective-beta/`.
 
 ## Important Implementation Notes
 
@@ -35,6 +37,9 @@ Recent status update:
 - `serve.mjs` is the local static server. Run:
   - `node serve.mjs`
   - then open `http://localhost:8000/`
+- GitHub Pages deployment is live from the repository root, not from the parent workspace folder.
+- `.nojekyll` is intentionally present at project root so GitHub Pages does not mishandle underscore-prefixed folders like `js/parts/_template/`.
+- `.gitattributes` is intentionally present to keep text-file line endings predictable across Windows/GitHub.
 - The title/orientation page is controlled by inline JS in `index.html`.
 - `js/app-shell.js` must use the real DOM IDs from `index.html`:
   - `screen-title`
@@ -82,6 +87,7 @@ Each part definition should export:
 - Parts 2, 3, and 4 each expose 6 rooms and 30 verbs.
 - Parts 2, 3, and 4 now start room activities normally.
 - Stage 1 banner text appears on room entry and `challenge.mp3` plays after stopping any still-playing intro audio.
+- On the live GitHub Pages build, parts 2, 3, and 4 stage 1 now play correctly after a hard refresh if the browser had cached older JS.
 - The blue developer button only appears in room view when dev mode has been toggled on.
 - Typing `dev` or `DEV` on the part page toggles dev mode and briefly shows `Dev mode ON` or `Dev mode OFF`.
 - The orientation menu uses hard-coded layout values:
@@ -94,6 +100,10 @@ Each part definition should export:
 
 - `VerbDetective/index.html`
   - contains the title/orientation screen, hard-coded part-book layout, and inline navigation logic
+- `VerbDetective/.nojekyll`
+  - required for GitHub Pages because the project contains underscore-prefixed folders
+- `VerbDetective/.gitattributes`
+  - keeps line-ending behavior consistent for text assets and source files
 - `VerbDetective/js/app-shell.js`
   - handles title screen to orientation screen switching
 - `VerbDetective/js/app.js`
@@ -102,15 +112,22 @@ Each part definition should export:
   - renders menu rooms and room view, and now controls developer-button visibility based on current view + dev mode
 - `VerbDetective/js/parts/index.js`
   - route map for part definitions
+- `VerbDetective/js/parts/part2/config.js`
+  - reuses shared intro audio from part 1 for `let_s_learn.mp3` and `challenge.mp3`
+- `VerbDetective/js/parts/part3/config.js`
+  - reuses shared intro audio from part 1 for `let_s_learn.mp3` and `challenge.mp3`
+- `VerbDetective/js/parts/part4/config.js`
+  - reuses shared intro audio from part 1 for `let_s_learn.mp3` and `challenge.mp3`
 
 ## Next Recommended Step
 
-Decide whether the hidden dev-mode toggle should stay session-only or persist across reloads for testers.
+Decide whether to keep sharing the intro assets from part 1, or move `let_s_learn.mp3` and `challenge.mp3` into a truly shared/common audio location.
 
 Useful checks for the next agent:
 - If beta testers need the dev shortcut across refreshes, add a persisted flag separate from learner progress.
 - If the hidden toggle should be more discreet, consider using a longer sequence or a timed multi-key pattern.
-- Browser-check the current beta flow end-to-end after serving with `serve.mjs`, especially room entry, stage 1 audio, and the `dev` toggle.
+- When verifying a GitHub Pages fix, always hard refresh or use a private window before assuming a deploy failed.
+- Browser-check both local `serve.mjs` and the live Pages URL, especially room entry, stage 1 audio, and the `dev` toggle.
 
 ## Last Verified
 
@@ -119,3 +136,5 @@ Useful checks for the next agent:
 - Room cards display correctly across parts 1-4.
 - Stage 1 room entry behavior is fixed.
 - Orientation debug controls have been removed.
+- The site is live at `https://english-db.github.io/verb-detective-beta/`.
+- Parts 2, 3, and 4 challenge intro audio works on the live site after cache refresh.

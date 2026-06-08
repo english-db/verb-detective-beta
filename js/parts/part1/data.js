@@ -35,66 +35,66 @@ export const HOTSPOTS = {
     name: "Kitchen",
     imageFile: "assets/parts/part1/images/kitchen.jpg",
     verbs: {
-      break: makeHotspot(375, 461, 50),
-      beat: makeHotspot(675, 510, 50),
-      bite: makeHotspot(920, 535, 50),
-      burn: makeHotspot(990, 300, 50),
-      cut: makeHotspot(1150, 560, 50)
+      break: makeHotspot(375, 461, 80),
+      beat: makeHotspot(675, 510, 80),
+      bite: makeHotspot(920, 535, 80),
+      burn: makeHotspot(990, 300, 80),
+      cut: makeHotspot(1150, 560, 80)
     }
   },
   livingroom: {
     name: "Living Room",
     imageFile: "assets/parts/part1/images/living.jpg",
     verbs: {
-      blow: makeHotspot(420, 430, 50),
-      come: makeHotspot(1200, 290, 50),
-      catch: makeHotspot(1100, 575, 50),
-      choose: makeHotspot(875, 305, 50),
-      cost: makeHotspot(825, 600, 50)
+      blow: makeHotspot(420, 430, 80),
+      come: makeHotspot(1200, 290, 80),
+      catch: makeHotspot(1100, 575, 80),
+      choose: makeHotspot(875, 305, 80),
+      cost: makeHotspot(825, 600, 80)
     }
   },
   bedroom: {
     name: "Bedroom",
     imageFile: "assets/parts/part1/images/bedroom.jpg",
     verbs: {
-      dream: makeHotspot(250, 160, 50),
-      awake: makeHotspot(565, 340, 50),
-      be: makeHotspot(875, 500, 50),
-      breed: makeHotspot(200, 620, 50),
-      bend: makeHotspot(1240, 425, 50)
+      dream: makeHotspot(250, 160, 80),
+      awake: makeHotspot(565, 340, 80),
+      be: makeHotspot(875, 500, 80),
+      breed: makeHotspot(200, 620, 80),
+      bend: makeHotspot(1240, 425, 80)
     }
   },
   office: {
     name: "Office",
     imageFile: "assets/parts/part1/images/office.jpg",
     verbs: {
-      draw: makeHotspot(340, 575, 50),
-      build: makeHotspot(665, 290, 50),
-      begin: makeHotspot(585, 620, 50),
-      bring: makeHotspot(975, 315, 50),
-      deal: makeHotspot(1260, 590, 50)
+      draw: makeHotspot(340, 575, 80),
+      build: makeHotspot(665, 290, 80),
+      begin: makeHotspot(585, 620, 80),
+      bring: makeHotspot(975, 315, 80),
+      deal: makeHotspot(1260, 590, 80)
     }
   },
   garage: {
     name: "Garage/Workshop",
     imageFile: "assets/parts/part1/images/garden.jpg",
     verbs: {
-      dig: makeHotspot(215, 645, 50),
-      do: makeHotspot(1010, 320, 50),
-      cast: makeHotspot(1000, 465, 50),
-      burst: makeHotspot(525, 250, 50),
-      buy: makeHotspot(1210, 535, 50)
+      dig: makeHotspot(215, 645, 80),
+      do: makeHotspot(1010, 320, 80),
+      cast: makeHotspot(1000, 465, 80),
+      burst: makeHotspot(525, 250, 80),
+      buy: makeHotspot(1210, 535, 80)
     }
   },
   attic: {
     name: "Attic",
     imageFile: "assets/parts/part1/images/attic.jpg",
     verbs: {
-      arise: makeHotspot(290, 410, 50),
-      become: makeHotspot(505, 260, 50),
-      bet: makeHotspot(790, 460, 50),
-      creep: makeHotspot(1150, 360, 50),
-      bleed: makeHotspot(1260, 620, 50)
+      arise: makeHotspot(1125, 300, 80),
+      become: makeHotspot(885, 160, 80),
+      bet: makeHotspot(670, 400, 80),
+      creep: makeHotspot(530, 665, 80),
+      bleed: makeHotspot(325, 605, 80)
     }
   }
 };
