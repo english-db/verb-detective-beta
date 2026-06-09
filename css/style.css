@@ -1159,6 +1159,18 @@ html, body {
     gap: clamp(4px, 0.5vw, 8px);
 }
 
+.typing-inline-separator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 clamp(2px, 0.35vw, 6px);
+    font-size: clamp(1.2rem, 1.45vw, 1.5rem);
+    font-weight: 900;
+    line-height: 1;
+    color: rgba(17, 24, 39, 0.72);
+    user-select: none;
+}
+
 .typing-separator {
     display: block;
     align-self: stretch;

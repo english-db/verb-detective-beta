@@ -329,6 +329,11 @@ export class UIRenderer {
     this.writtenOverlay.className = 'written-overlay hidden';
   }
 
+  focusTypingInput() {
+    const input = this.writtenOverlay?.querySelector('#writtenTypingInput');
+    input?.focus({ preventScroll: true });
+  }
+
   setInstructionAudioIcon(verbId, options = {}) {
     if (!this.instructionText) return;
 
@@ -342,8 +347,12 @@ export class UIRenderer {
 
     const button = this.instructionText.querySelector('.instruction-audio-button');
     if (button) {
+      button.onmousedown = (event) => {
+        event.preventDefault();
+      };
       button.onclick = async () => {
         await this.audioManager?.playVerbAudio(verbId);
+        options.onReplayComplete?.();
       };
     }
 
@@ -685,17 +694,41 @@ export class UIRenderer {
     overlay.className = 'written-overlay written-overlay--typing';
 
     const words = [verb.base, verb.preterite, verb.participle];
-    const buildSlots = (word, wordIndex) => Array.from(word).map((letter, letterIndex) => (
-      `<span class="typing-slot" data-word-index="${wordIndex}" data-letter-index="${letterIndex}">_</span>`
-    )).join('');
+    const formModels = words.map((word) => {
+      const segments = String(word)
+        .split(/\s*[,/]\s*|\s+/)
+        .map((segment) => segment.trim())
+        .filter(Boolean);
+
+      return {
+        segments,
+        expected: segments.join('').toLowerCase()
+      };
+    });
+
+    const buildSlots = (formModel, wordIndex) => {
+      let letterIndex = 0;
+
+      return formModel.segments.map((segment, segmentIndex) => {
+        const slots = Array.from(segment).map(() => (
+          `<span class="typing-slot" data-word-index="${wordIndex}" data-letter-index="${letterIndex++}">_</span>`
+        )).join('');
+
+        if (segmentIndex === formModel.segments.length - 1) {
+          return slots;
+        }
+
+        return `${slots}<span class="typing-inline-separator" aria-hidden="true">/</span>`;
+      }).join('');
+    };
 
     overlay.innerHTML = `
       <div class="typing-slot-pill" id="typingSlotPill" aria-label="Type the three forms">
-        <div class="typing-word-group" data-word-index="0">${buildSlots(words[0], 0)}</div>
+        <div class="typing-word-group" data-word-index="0">${buildSlots(formModels[0], 0)}</div>
         <span class="typing-separator" aria-hidden="true"></span>
-        <div class="typing-word-group" data-word-index="1">${buildSlots(words[1], 1)}</div>
+        <div class="typing-word-group" data-word-index="1">${buildSlots(formModels[1], 1)}</div>
         <span class="typing-separator" aria-hidden="true"></span>
-        <div class="typing-word-group" data-word-index="2">${buildSlots(words[2], 2)}</div>
+        <div class="typing-word-group" data-word-index="2">${buildSlots(formModels[2], 2)}</div>
       </div>
       <input type="text" class="typing-input typing-input--hidden" id="writtenTypingInput"
              autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done">
@@ -705,21 +738,22 @@ export class UIRenderer {
     const slotPill = overlay.querySelector('#typingSlotPill');
     const input = overlay.querySelector('#writtenTypingInput');
     if (!slotPill || !input) return;
-    input.focus();
+    this.focusTypingInput();
 
-    const expected = words.map((word) => word.toLowerCase());
-    const buffers = words.map((word) => Array.from({ length: word.length }, () => ''));
-    const slotsByWord = words.map((_, wordIndex) => Array.from(slotPill.querySelectorAll(`.typing-word-group[data-word-index="${wordIndex}"] .typing-slot`)));
+    const expected = formModels.map((formModel) => formModel.expected);
+    const wordLengths = expected.map((word) => word.length);
+    const buffers = formModels.map((formModel) => Array.from({ length: formModel.expected.length }, () => ''));
+    const slotsByWord = formModels.map((_, wordIndex) => Array.from(slotPill.querySelectorAll(`.typing-word-group[data-word-index="${wordIndex}"] .typing-slot`)));
     const caret = { wordIndex: 0, letterIndex: 0 };
 
     const clampCaret = () => {
       if (caret.wordIndex < 0) caret.wordIndex = 0;
       if (caret.wordIndex >= words.length) caret.wordIndex = words.length - 1;
-      const maxIndex = Math.max(0, words[caret.wordIndex].length - 1);
+      const maxIndex = Math.max(0, wordLengths[caret.wordIndex] - 1);
       if (caret.letterIndex < 0) {
         if (caret.wordIndex > 0) {
           caret.wordIndex -= 1;
-          caret.letterIndex = Math.max(0, words[caret.wordIndex].length - 1);
+          caret.letterIndex = Math.max(0, wordLengths[caret.wordIndex] - 1);
         } else {
           caret.letterIndex = 0;
         }
@@ -730,25 +764,25 @@ export class UIRenderer {
     };
 
     const focusInput = () => {
-      input.focus({ preventScroll: true });
+      this.focusTypingInput();
     };
 
     const setCaret = (wordIndex, letterIndex) => {
       caret.wordIndex = Math.max(0, Math.min(wordIndex, words.length - 1));
-      caret.letterIndex = Math.max(0, Math.min(letterIndex, words[caret.wordIndex].length - 1));
+      caret.letterIndex = Math.max(0, Math.min(letterIndex, wordLengths[caret.wordIndex] - 1));
       render();
       focusInput();
     };
 
     const moveNext = () => {
-      const currentWord = words[caret.wordIndex];
-      if (caret.letterIndex < currentWord.length - 1) {
+      const currentWordLength = wordLengths[caret.wordIndex];
+      if (caret.letterIndex < currentWordLength - 1) {
         caret.letterIndex += 1;
       } else if (caret.wordIndex < words.length - 1) {
         caret.wordIndex += 1;
         caret.letterIndex = 0;
       } else {
-        caret.letterIndex = currentWord.length - 1;
+        caret.letterIndex = currentWordLength - 1;
       }
       render();
       focusInput();
@@ -809,7 +843,7 @@ export class UIRenderer {
       let index = 0;
 
       for (let w = 0; w < words.length; w += 1) {
-        for (let l = 0; l < words[w].length; l += 1) {
+        for (let l = 0; l < wordLengths[w]; l += 1) {
           buffers[w][l] = lettersOnly[index] || '';
           index += 1;
         }
@@ -831,7 +865,7 @@ export class UIRenderer {
 
       if (!found) {
         nextWord = words.length - 1;
-        nextLetter = Math.max(0, words[nextWord].length - 1);
+        nextLetter = Math.max(0, wordLengths[nextWord] - 1);
       }
       caret.wordIndex = nextWord;
       caret.letterIndex = nextLetter;
@@ -865,7 +899,7 @@ export class UIRenderer {
           clearCurrent();
         } else if (caret.wordIndex > 0) {
           caret.wordIndex -= 1;
-          caret.letterIndex = Math.max(0, words[caret.wordIndex].length - 1);
+          caret.letterIndex = Math.max(0, wordLengths[caret.wordIndex] - 1);
           clearCurrent();
         }
         render();

@@ -1510,7 +1510,10 @@ class AppController {
     }
 
     if (stage === 4) {
-      this.uiRenderer.setInstructionAudioIcon(verbId, { chip: true });
+      this.uiRenderer.setInstructionAudioIcon(verbId, {
+        chip: true,
+        onReplayComplete: () => this.uiRenderer.focusTypingInput()
+      });
       void this.audioManager.playVerbAudio(verbId);
       this.uiRenderer.showHearts(3 - challenge.misses);
       this.uiRenderer.renderTypingOverlay(VERB_FORMS[verbId], async (isCorrect) => {
