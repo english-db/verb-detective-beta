@@ -168,6 +168,198 @@ html, body {
     transform: translateY(calc(var(--menu-lift) * -1));
 }
 
+.menu-footer {
+    position: absolute;
+    left: 50%;
+    bottom: clamp(10px, 1.8vh, 18px);
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    pointer-events: auto;
+}
+
+.menu-footer-link {
+    border: none;
+    background: transparent;
+    color: #e18a17;
+    font-family: 'Shantell Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: clamp(1rem, 2vw, 1.15rem);
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.18em;
+    text-shadow: 0 3px 10px rgba(0, 0, 0, 0.65);
+    cursor: pointer;
+    transition: transform 0.16s ease, color 0.16s ease, text-shadow 0.16s ease;
+}
+
+.menu-footer-link:hover {
+    color: #f2b24f;
+    transform: translateY(-1px);
+    text-shadow: 0 4px 14px rgba(0, 0, 0, 0.78);
+}
+
+.menu-footer-link:focus-visible {
+    outline: 3px solid rgba(255, 241, 166, 0.95);
+    outline-offset: 4px;
+    border-radius: 999px;
+}
+
+.part-victory-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 320;
+    overflow: hidden;
+    pointer-events: auto;
+}
+
+.part-victory-overlay.hidden {
+    display: none;
+}
+
+.part-victory-overlay.part-victory-overlay--armed {
+    cursor: pointer;
+}
+
+.part-victory-confetti {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 2s ease;
+}
+
+.part-victory-confetti--back {
+    z-index: 1;
+}
+
+.part-victory-confetti--front {
+    z-index: 3;
+    transform: scale(1.18);
+    transform-origin: center top;
+    filter: blur(1.8px);
+}
+
+.part-victory-overlay.part-victory-overlay--exiting .part-victory-confetti {
+    opacity: 0;
+}
+
+.part-victory-characters {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.part-victory-character {
+    position: absolute;
+    bottom: 0;
+    width: min(30vw, 340px);
+    max-width: 34vw;
+    height: auto;
+    opacity: 0;
+    will-change: transform, opacity;
+}
+
+.part-victory-character--left {
+    left: clamp(8px, 2vw, 28px);
+    transform: translate3d(-120%, 0, 0) scale(0.92);
+}
+
+.part-victory-character--right {
+    right: clamp(8px, 2vw, 28px);
+    transform: translate3d(120%, 0, 0) scale(0.92);
+}
+
+.part-victory-overlay.part-victory-overlay--active .part-victory-character--left {
+    animation: part-victory-enter-left 0.75s cubic-bezier(0.2, 0.88, 0.22, 1.18) forwards;
+}
+
+.part-victory-overlay.part-victory-overlay--active .part-victory-character--right {
+    animation: part-victory-enter-right 0.75s cubic-bezier(0.2, 0.88, 0.22, 1.18) forwards;
+}
+
+.part-victory-overlay.part-victory-overlay--exiting .part-victory-character--left {
+    animation: part-victory-exit-left 0.65s cubic-bezier(0.55, 0.02, 0.8, 0.2) forwards;
+}
+
+.part-victory-overlay.part-victory-overlay--exiting .part-victory-character--right {
+    animation: part-victory-exit-right 0.65s cubic-bezier(0.55, 0.02, 0.8, 0.2) forwards;
+}
+
+.part-victory-confetti-piece {
+    position: absolute;
+    top: -14%;
+    opacity: 0.96;
+    will-change: transform;
+    animation-name: confetti-fall;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    pointer-events: none;
+}
+
+.part-victory-confetti-piece::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 15% 35% 25% 45%;
+    transform: rotate(18deg);
+}
+
+@keyframes part-victory-enter-left {
+    0% {
+        opacity: 0;
+        transform: translate3d(-120%, 0, 0) scale(0.92);
+    }
+    68% {
+        opacity: 1;
+        transform: translate3d(3%, 0, 0) scale(1.03);
+    }
+    100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+}
+
+@keyframes part-victory-enter-right {
+    0% {
+        opacity: 0;
+        transform: translate3d(120%, 0, 0) scale(0.92);
+    }
+    68% {
+        opacity: 1;
+        transform: translate3d(-3%, 0, 0) scale(1.03);
+    }
+    100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+}
+
+@keyframes part-victory-exit-left {
+    0% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate3d(-120%, 0, 0) scale(0.92);
+    }
+}
+
+@keyframes part-victory-exit-right {
+    0% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate3d(120%, 0, 0) scale(0.92);
+    }
+}
+
 /* Room Card */
 .room-card {
     position: relative;
@@ -1434,6 +1626,50 @@ html, body {
     margin-bottom: 22px;
 }
 
+.legacy-modal-body--stacked {
+    display: block;
+}
+
+.acknowledgments-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+    font-size: 1rem;
+    color: #2c3e50;
+}
+
+.acknowledgments-copy p {
+    margin: 0;
+}
+
+.acknowledgments-license {
+    margin-top: 4px;
+}
+
+.acknowledgments-license-icons {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.acknowledgments-license-icons img {
+    width: 24px;
+    height: 24px;
+    display: block;
+}
+
+.acknowledgments-copy a {
+    color: #1d4ed8;
+    font-weight: 700;
+}
+
+.acknowledgments-copy a:hover {
+    color: #1e40af;
+}
+
 .legacy-modal-buttons {
     display: flex;
     justify-content: center;
@@ -1679,4 +1915,29 @@ html, body {
     opacity: 0.5;
     cursor: not-allowed;
     pointer-events: none;
+}
+
+/* ============================================
+   STAGE 2 - HOTSPOT PULSE ANIMATION
+   ============================================ */
+
+@keyframes hotspotPulse {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.32);
+        box-shadow: 0 0 14px 6px rgba(46, 204, 113, 0.7);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
+    }
+}
+
+.hotspot-icon.pulsing {
+    animation: hotspotPulse 1.4s ease-in-out infinite;
 }

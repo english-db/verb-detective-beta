@@ -90,7 +90,7 @@ export const HOTSPOTS = {
     name: "Attic",
     imageFile: "assets/parts/part1/images/attic.jpg",
     verbs: {
-      arise: makeHotspot(1125, 300, 80),
+      arise: makeHotspot(1120, 350, 80),
       become: makeHotspot(885, 160, 80),
       bet: makeHotspot(670, 400, 80),
       creep: makeHotspot(530, 665, 80),

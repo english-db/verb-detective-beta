@@ -22,6 +22,19 @@
             <div id="roomGrid" class="room-grid">
                 <!-- Room cards rendered here by uiRenderer -->
             </div>
+            <div class="menu-footer">
+                <button id="acknowledgmentsButton" class="menu-footer-link" type="button">
+                    Acknowledgments
+                </button>
+            </div>
+            <div id="partVictoryOverlay" class="part-victory-overlay hidden" aria-hidden="true">
+                <div id="partVictoryConfettiBack" class="part-victory-confetti part-victory-confetti--back"></div>
+                <div class="part-victory-characters" aria-hidden="true">
+                    <img id="partVictoryCharacterLeft" class="part-victory-character part-victory-character--left" src="assets/common/images/victory1.png" alt="">
+                    <img id="partVictoryCharacterRight" class="part-victory-character part-victory-character--right" src="assets/common/images/victory2.png" alt="">
+                </div>
+                <div id="partVictoryConfettiFront" class="part-victory-confetti part-victory-confetti--front"></div>
+            </div>
             <button id="resetProgressButton" class="btn-reset-progress" type="button" aria-label="Reset Progress">
                 <span class="sr-only">Reset Progress</span>
             </button>

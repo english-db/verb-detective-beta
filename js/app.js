@@ -49,6 +49,7 @@ class AppController {
     this.storageKey = `irregularVerbs_state_part${this.partConfig?.id || partId}`;
     this.legacyStorageKey = 'irregularVerbs_state';
     this.loadedFromLegacyStorage = false;
+    this.pendingPartVictory = false;
   }
 
   // ============================================
@@ -80,7 +81,7 @@ class AppController {
     }
     const developerModeButton = document.getElementById('developerModeButton');
     if (developerModeButton) {
-      developerModeButton.onclick = () => this.developerAdvanceStage();
+      developerModeButton.onclick = () => this.handleDeveloperAction();
     }
     this._bindDeveloperToggleShortcut();
 
@@ -574,6 +575,7 @@ class AppController {
 
     const room = this.currentRoomId ? this.state.rooms[this.currentRoomId] : null;
     const activeChallenge = this.currentOralChallenge || room?.writtenChallenge;
+    const shouldCelebratePartCompletion = this.pendingPartVictory;
     if (this.currentRoomId && room && activeChallenge && !activeChallenge.failed && !activeChallenge.challengeFailed) {
       this._restoreChallengeProgressSnapshot(this.currentRoomId);
       this._saveState();
@@ -586,12 +588,17 @@ class AppController {
     this._stage12Successes = null;
     this.uiRenderer?.setBackButtonVictoryMode(false);
     this.uiRenderer.clearConfetti();
+    this.uiRenderer.hidePartVictoryCelebration(true);
     this.uiRenderer.clearWrittenOverlay();
     this.uiRenderer.setInstruction('', null);
     this.uiRenderer.renderMenuView(
       (roomId) => this.startRoom(roomId),
       () => this.resetProgress()
     );
+    if (shouldCelebratePartCompletion) {
+      this.pendingPartVictory = false;
+      this.uiRenderer.showPartVictoryCelebration();
+    }
   }
 
   /**
@@ -616,7 +623,9 @@ class AppController {
     this.currentOralChallenge = null;
     this._writtenDegradedMode = false;
     this._stage12Successes = null;
+    this.pendingPartVictory = false;
     this.uiRenderer.clearConfetti();
+    this.uiRenderer.hidePartVictoryCelebration(true);
     this.uiRenderer.clearWrittenOverlay();
 
     if (this.uiRenderer.currentClickHandler) {
@@ -776,6 +785,9 @@ class AppController {
         await this.audioManager.playVerbAudio(clickedVerbId);
         this._recordOralSuccess(roomId, clickedVerbId, true);
         challenge.currentIndex += 1;
+        if (challenge.currentIndex === 1) {
+          this.uiRenderer.stopHotspotPulse();
+        }
         this._saveState();
         this._updateRoomProgress(roomId);
 
@@ -993,6 +1005,7 @@ class AppController {
       const firstVerbId = challenge.expectedVerbIds[0];
       const firstTranslation = this._getVerbTranslation(firstVerbId);
       this.uiRenderer.setInstruction(firstTranslation, null, null, { chip: true, pop: true, shake: true });
+      this.uiRenderer.startHotspotPulse();
     } else if (stage === 3) {
       if (!challenge.expectedVerbIds.length) {
         await this._completeOralChallenge(roomId, stage);
@@ -1810,6 +1823,53 @@ class AppController {
     await this._developerCompleteCurrentStage(roomId);
   }
 
+  async handleDeveloperAction() {
+    if (this.uiRenderer?.currentView === 'menu') {
+      this._developerCompleteMenuRooms();
+      return;
+    }
+
+    await this.developerAdvanceStage();
+  }
+
+  _developerCompleteMenuRooms() {
+    const roomIds = Object.keys(ROOMS).slice(0, 5);
+    let updatedCount = 0;
+
+    roomIds.forEach((roomId) => {
+      const room = this.state.rooms[roomId];
+      if (!room) {
+        return;
+      }
+
+      room.oralCheckpointComplete = true;
+      room.oralStage = 6;
+      room.challengeFailed = false;
+      room.challengeMisses = 0;
+      room.writtenCheckpointComplete = true;
+      room.writtenStage = 5;
+      room.writtenChallenge = null;
+
+      Object.values(room.verbs).forEach((verb) => {
+        verb.iconRevealed = true;
+        verb.oral.phase = 'complete';
+        verb.oral.successes = Math.max(verb.oral.successes || 0, 6);
+        verb.written.successes = Math.max(verb.written.successes || 0, 5);
+      });
+
+      updatedCount += 1;
+      this.scormWrapper?.sendRoomCompletion(roomId, 100, 100);
+    });
+
+    this.pendingPartVictory = false;
+    this._saveState();
+    this.uiRenderer.renderMenuView(
+      (nextRoomId) => this.startRoom(nextRoomId),
+      () => this.resetProgress()
+    );
+    this.uiRenderer.showStatusMessage(`${updatedCount} rooms complétées`);
+  }
+
   /**
    * Temporary developer helper: complete only the current stage.
    * This is intentionally isolated so it can be removed cleanly later.
@@ -1898,7 +1958,8 @@ class AppController {
       const projectCompletion = this.phaseManager.checkProjectCompletion();
       if (projectCompletion.isComplete) {
         console.log('AppController: All rooms complete! Project finished!');
-    this.scormWrapper.sendFinalCompletion(Object.keys(ROOMS).length * 100);
+        this.pendingPartVictory = true;
+        this.scormWrapper.sendFinalCompletion(Object.keys(ROOMS).length * 100);
       }
 
       this._saveState();

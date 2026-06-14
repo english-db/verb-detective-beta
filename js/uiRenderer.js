@@ -43,11 +43,19 @@ export class UIRenderer {
     this.writtenOverlay = document.getElementById('writtenOverlay');
     this.stageIndicator = document.getElementById('stageIndicator');
     this.developerModeButton = document.getElementById('developerModeButton');
+    this.partVictoryOverlay = document.getElementById('partVictoryOverlay');
+    this.partVictoryConfettiBack = document.getElementById('partVictoryConfettiBack');
+    this.partVictoryConfettiFront = document.getElementById('partVictoryConfettiFront');
     this.developerModeEnabled = false;
     this.currentView = 'menu';
     this.currentRoomId = null;
     this.currentClickHandler = null;    // For cleanup
     this.currentResizeHandler = null;   // For cleanup
+    this._isPulsing = false;
+    this.partVictoryDismissArmed = false;
+    this.partVictoryArmTimeout = null;
+    this.partVictoryCleanupTimeout = null;
+    this.partVictoryClickHandler = null;
   }
 
   // ============================================
@@ -62,6 +70,7 @@ export class UIRenderer {
   renderMenuView(onRoomSelect, onResetProgress) {
     const roomGrid = document.getElementById('roomGrid');
     roomGrid.innerHTML = '';
+    this.hidePartVictoryCelebration(true);
 
     const partTitle = document.getElementById('partTitle');
     const titleText = this.partConfig?.title || `Irregular Verbs - Part ${this.partDefinition?.id || ''}`.trim();
@@ -73,6 +82,11 @@ export class UIRenderer {
     const resetButton = document.getElementById('resetProgressButton');
     if (resetButton) {
       resetButton.onclick = () => this.showResetConfirmation(onResetProgress);
+    }
+
+    const acknowledgmentsButton = document.getElementById('acknowledgmentsButton');
+    if (acknowledgmentsButton) {
+      acknowledgmentsButton.onclick = () => this.showAcknowledgmentsModal();
     }
 
     Object.values(this.rooms).forEach(room => {
@@ -316,6 +330,34 @@ export class UIRenderer {
       if (!visibleVerbIds.has(icon.dataset.verbId)) {
         icon.remove();
       }
+    });
+
+    if (this._isPulsing) {
+      this.startHotspotPulse();
+    }
+  }
+
+  /**
+   * Start pulsing all visible hotspot icons with a staggered delay.
+   */
+  startHotspotPulse() {
+    this._isPulsing = true;
+    const icons = document.querySelectorAll('#iconsLayer .hotspot-icon');
+    icons.forEach((icon, index) => {
+      icon.style.animationDelay = `${index * 0.22}s`;
+      icon.classList.add('pulsing');
+    });
+  }
+
+  /**
+   * Stop pulsing all visible hotspot icons.
+   */
+  stopHotspotPulse() {
+    this._isPulsing = false;
+    const icons = document.querySelectorAll('#iconsLayer .hotspot-icon');
+    icons.forEach((icon) => {
+      icon.classList.remove('pulsing');
+      icon.style.animationDelay = '';
     });
   }
 
@@ -1267,6 +1309,108 @@ export class UIRenderer {
     }
   }
 
+  showPartVictoryCelebration() {
+    const overlay = this.partVictoryOverlay;
+    const back = this.partVictoryConfettiBack;
+    const front = this.partVictoryConfettiFront;
+    if (!overlay || !back || !front) return;
+
+    this.hidePartVictoryCelebration(true);
+
+    overlay.classList.remove('hidden', 'part-victory-overlay--armed', 'part-victory-overlay--exiting');
+    overlay.classList.add('part-victory-overlay--active');
+    overlay.setAttribute('aria-hidden', 'false');
+
+    this._renderPartVictoryConfetti(back, 90, 1, false);
+    this._renderPartVictoryConfetti(front, 60, 1.7, true);
+
+    this.partVictoryDismissArmed = false;
+    this.partVictoryClickHandler = () => {
+      if (!this.partVictoryDismissArmed) {
+        return;
+      }
+
+      this.partVictoryDismissArmed = false;
+      overlay.classList.remove('part-victory-overlay--armed');
+      overlay.classList.remove('part-victory-overlay--active');
+      overlay.classList.add('part-victory-overlay--exiting');
+      overlay.removeEventListener('click', this.partVictoryClickHandler);
+
+      this.partVictoryCleanupTimeout = window.setTimeout(() => {
+        this.hidePartVictoryCelebration(true);
+      }, 2000);
+    };
+
+    overlay.addEventListener('click', this.partVictoryClickHandler);
+
+    this.partVictoryArmTimeout = window.setTimeout(() => {
+      this.partVictoryDismissArmed = true;
+      overlay.classList.add('part-victory-overlay--armed');
+    }, 3000);
+  }
+
+  hidePartVictoryCelebration(immediate = false) {
+    window.clearTimeout(this.partVictoryArmTimeout);
+    window.clearTimeout(this.partVictoryCleanupTimeout);
+    this.partVictoryArmTimeout = null;
+    this.partVictoryCleanupTimeout = null;
+    this.partVictoryDismissArmed = false;
+
+    const overlay = this.partVictoryOverlay;
+    if (!overlay) return;
+
+    if (this.partVictoryClickHandler) {
+      overlay.removeEventListener('click', this.partVictoryClickHandler);
+      this.partVictoryClickHandler = null;
+    }
+
+    if (immediate) {
+      overlay.classList.add('hidden');
+      overlay.classList.remove('part-victory-overlay--active', 'part-victory-overlay--armed', 'part-victory-overlay--exiting');
+      overlay.setAttribute('aria-hidden', 'true');
+      if (this.partVictoryConfettiBack) {
+        this.partVictoryConfettiBack.innerHTML = '';
+      }
+      if (this.partVictoryConfettiFront) {
+        this.partVictoryConfettiFront.innerHTML = '';
+      }
+    }
+  }
+
+  _renderPartVictoryConfetti(target, count, scaleMultiplier = 1, useBlur = false) {
+    if (!target) return;
+
+    target.innerHTML = '';
+
+    const CONFETTI_COLORS = [
+      '#ff5fa2', '#4fd2ff', '#7dff57',
+      '#ffe14a', '#ff9d2e', '#b96cff', '#68f0ff'
+    ];
+    const random = (min, max) => Math.random() * (max - min) + min;
+
+    for (let i = 0; i < count; i += 1) {
+      const confetti = document.createElement('div');
+      confetti.className = 'part-victory-confetti-piece';
+
+      const width = random(7, 18) * scaleMultiplier;
+      const height = random(8, 24) * scaleMultiplier;
+      confetti.style.width = `${width}px`;
+      confetti.style.height = `${height}px`;
+      confetti.style.left = `${random(0, 100)}%`;
+      confetti.style.animationDuration = `${random(6.8, 8.2)}s`;
+      confetti.style.animationDelay = `${random(-8, 0)}s`;
+      confetti.style.transform = `rotate(${random(0, 360)}deg)`;
+      confetti.style.background = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
+      confetti.style.borderRadius = `${random(10, 45)}% ${random(10, 50)}% ${random(10, 50)}% ${random(10, 45)}%`;
+      confetti.style.opacity = random(0.75, 1).toFixed(2);
+      confetti.style.filter = useBlur
+        ? `blur(${random(0.6, 1.5).toFixed(2)}px) brightness(${random(0.95, 1.14).toFixed(2)})`
+        : `brightness(${random(0.92, 1.1).toFixed(2)})`;
+
+      target.appendChild(confetti);
+    }
+  }
+
   /**
    * Get random confetti color
    * @private
@@ -1349,6 +1493,45 @@ export class UIRenderer {
   }
 
   /**
+   * Show acknowledgments modal.
+   */
+  showAcknowledgmentsModal() {
+    const content = `
+      <div class="legacy-modal-title">Acknowledgments</div>
+      <div class="legacy-modal-body legacy-modal-body--stacked">
+        <div class="acknowledgments-copy">
+          <p>Authored by <b>David Beutier</b></p>
+          <p>Coded by <b>Claude 4.6</b> and <b>Codex 5.4</b></p>
+          <p>Visuals generated by <b>Gemini 3.1</b></p>
+          <p>Voices generated by <b>Murf Gen2</b></p>
+          <p>The author would like to thank Damien, Nathalie, C&eacute;line, Mathis for their valuable feedback.</p>
+          <p class="acknowledgments-license">
+            <span class="acknowledgments-license-icons" aria-label="Creative Commons license icons">
+              <img src="assets/common/ui/cc.svg" alt="CC">
+              <img src="assets/common/ui/by.svg" alt="BY">
+              <img src="assets/common/ui/nc.svg" alt="NC">
+              <img src="assets/common/ui/nd.svg" alt="ND">
+            </span>
+            <b>CC BY-NC-ND 4.0</b> Content on this site is licensed under a
+            <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noreferrer">Creative Commons Attribution 4.0 International license</a>.
+            Icons by <a href="https://fontawesome.com/" target="_blank" rel="noreferrer">Font Awesome</a> and <a href="https://lucide.dev/" target="_blank" rel="noreferrer">Lucide</a>.
+          </p>
+        </div>
+      </div>
+      <div class="legacy-modal-buttons">
+        <button class="legacy-btn legacy-btn-secondary" id="closeAcknowledgmentsBtn">Close</button>
+      </div>
+    `;
+
+    this._legacyShowModal(content, (modal) => {
+      const closeBtn = modal?.querySelector('#closeAcknowledgmentsBtn');
+      closeBtn?.addEventListener('click', () => {
+        this._legacyHideModal();
+      });
+    });
+  }
+
+  /**
    * Show room completion modal with confetti
    * @param {string} roomName - Room name
    * @param {Function} onBackClick - Callback for back button
@@ -1407,7 +1590,7 @@ export class UIRenderer {
   _syncDeveloperModeButton() {
     if (!this.developerModeButton) return;
 
-    const shouldShow = this.developerModeEnabled && this.currentView === 'room';
+    const shouldShow = this.developerModeEnabled && (this.currentView === 'room' || this.currentView === 'menu');
     this.developerModeButton.classList.toggle('hidden', !shouldShow);
   }
 
